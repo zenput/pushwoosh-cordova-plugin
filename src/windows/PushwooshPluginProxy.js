@@ -29,7 +29,7 @@ module.exports = {
     registerDevice: function (success, fail) {
         if (!this.service) {
             // postpone
-            setTimeout(function () { this.registerDevice(success, fail) }, 1000);
+            setTimeout(registerDevice, 1000, success, fail);
         }
 
         this.service.ononpushtokenreceived = function (token) {
