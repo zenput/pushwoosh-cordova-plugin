@@ -9,21 +9,21 @@ module.exports = {
     onDeviceReady: function (success, fail, config) {
         try {
             this.service = new PushSDK.NotificationService.getCurrent(config[0].appid);
-
-            var startPushData = null;
-
-            if (platform.activationContext && platform.activationContext.args) {
-                startPushData = platform.activationContext.args;
-            }
-
-            if (startPushData !== null)
-                PushSDK.NotificationService.handleStartPush(startPushData);
-
-            success();
         }
         catch (e) {
             fail(e);
         }
+
+        var startPushData = null;
+
+        if (platform.activationContext && platform.activationContext.args) {
+            startPushData = platform.activationContext.args;
+        }
+
+        if (startPushData !== null)
+            PushSDK.NotificationService.handleStartPush(startPushData);
+
+        success();
     },
 
     onAppActivated: function (success, fail, args) {
