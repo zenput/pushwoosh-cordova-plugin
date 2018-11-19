@@ -7,18 +7,23 @@ var platform = require('cordova/platform');
 module.exports = {
 
     onDeviceReady: function (success, fail, config) {
-        this.service = new PushSDK.NotificationService.getCurrent(config[0].appid);
+        try {
+            this.service = new PushSDK.NotificationService.getCurrent(config[0].appid);
 
-        var startPushData = null;
+            var startPushData = null;
 
-        if (platform.activationContext && platform.activationContext.args) {
-            startPushData = platform.activationContext.args;
+            if (platform.activationContext && platform.activationContext.args) {
+                startPushData = platform.activationContext.args;
+            }
+
+            if (startPushData !== null)
+                PushSDK.NotificationService.handleStartPush(startPushData);
+
+            success();
         }
-
-        if (startPushData !== null)
-            PushSDK.NotificationService.handleStartPush(startPushData);
-
-        success();
+        catch (e) {
+            fail(e);
+        }
     },
 
     onAppActivated: function (success, fail, args) {
@@ -29,7 +34,8 @@ module.exports = {
     registerDevice: function (success, fail) {
         if (!this.service) {
             // postpone
-            setTimeout(registerDevice, 1000, success, fail);
+            setTimeout(function () { this.plugins.pushNotification.registerDevice(success, fail) }, 5000);
+            return;
         }
 
         this.service.ononpushtokenreceived = function (token) {
