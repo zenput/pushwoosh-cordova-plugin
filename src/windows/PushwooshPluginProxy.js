@@ -34,7 +34,7 @@ module.exports = {
     registerDevice: function (success, fail) {
         if (!this.service) {
             // postpone
-            setTimeout(function () { this.plugins.pushNotification.registerDevice(success, fail) }, 5000);
+            setTimeout(function () { this.plugins.pushNotification.registerDevice(success, fail); }, 5000);
             return;
         }
 
