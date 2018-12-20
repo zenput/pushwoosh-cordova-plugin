@@ -303,6 +303,28 @@ PushNotification.prototype.postEvent = function(event, attributes) {
 	exec(null, null, "PushNotification", "postEvent", [event, attributes]);
 };
 
+//Function: addJavaScriptInterface
+//Adds javascript interface for In-App Messages.
+//Interface will be accessible from Rich Media as object with specified `name` and function 'callFunction('<function_name>', JSON.stringify(<params>))'.
+//
+//Parameters:
+// "name" - interface name
+//
+//Example:
+//Cordova part:
+//  function foo() {
+//      alert("Bridge is working!");
+//  }
+//
+//
+//  pushwoosh.addJavaScriptInterface('testBridge');
+//
+//Rich Media part:
+//  testBridge.callFunction('foo', JSON.stringify({'param1':1,'param2':'test'}))
+PushNotification.prototype.addJavaScriptInterface = function(name) {
+    exec(null, null, "PushNotification", "addJavaScriptInterface", [name]);
+};
+
 //Function: createLocalNotification
 //[android, ios] Schedules local notification,
 //
@@ -463,8 +485,82 @@ PushNotification.prototype.notificationCallback = function(notification) {
 	document.dispatchEvent(ev);
 };
 
-PushNotification.prototype.presentInboxUI = function() {
-	exec(null, null, "PushNotification", "presentInboxUI", []);
+// Opens Inbox screen.
+//
+// Supported style keys:
+//
+// Customizes the date formatting
+// "dateFormat"
+//
+// The default icon in the cell next to the message; if not specified, the app icon is used
+// "defaultImageIcon"
+//
+// The appearance of the unread messages mark (iOS only)
+// "unreadImage"
+//
+// The image which is displayed if an error occurs and the list of inbox messages is empty
+// "listErrorImage"
+//
+// The image which is displayed if the list of inbox messages is empty
+// "listEmptyImage"
+//
+// The error text which is displayed when an error occurs; cannot be localized
+// "listErrorMessage"
+//
+// The text which is displayed if the list of inbox messages is empty; cannot be localized
+// "listEmptyMessage"
+//
+// The default text color (iOS only)
+// "defaultTextColor"
+//
+// The accent color
+// "accentColor"
+//
+// The default background color
+// "backgroundColor"
+//
+// The default selection color
+// "highlightColor"
+//
+// The color of message titles
+// "titleColor"
+//
+// The color of message titles if message was readed (Android only)
+// "readTitleColor"
+//
+// The color of messages descriptions
+// "descriptionColor"
+//
+// The color of messages descriptions if message was readed (Android only)
+// "readDescriptionColor"
+//
+// The color of message dates
+// "dateColor"
+//
+// The color of message dates if message was readed (Android only)
+// "readDateColor"
+//
+// The color of the separator
+// "dividerColor"
+//
+//Example:
+// Pushwoosh.presentInboxUI({
+//   "dateFormat" : "dd.MMMM.yyyy",
+//   "defaultImageIcon" : 'img/icon.png',
+//   "listErrorImage" : 'img/error.png',
+//   "listEmptyImage" : 'img/empty.png',
+//   "listErrorMessage" : "Error message",
+//   "listEmptyMessage" : "Empty message",
+//   "accentColor" : '#ff00ff',
+//   "highlightColor" : '#ff00ff',
+//   "dateColor" : '#ff00ff',
+//   "titleColor" : '#ff00ff',
+//   "dividerColor" : '#ff00ff',
+//   "descriptionColor" : '#ff00ff',
+//   "backgroundColor" : '#ff00ff'
+// });
+PushNotification.prototype.presentInboxUI = function(params) {
+	exec(null, null, "PushNotification", "presentInboxUI", [ params ]);
 }
 
 // Show inApp for change setting Enable/disable all communication with Pushwoosh

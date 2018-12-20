@@ -1,4 +1,4 @@
-Phonegup Pushwoosh Push Notifications plugin
+Phonegap Pushwoosh Push Notifications plugin
 ===================================================
 
 [![GitHub release](https://img.shields.io/github/release/Pushwoosh/pushwoosh-phonegap-plugin.svg?style=flat-square)](https://github.com/Pushwoosh/pushwoosh-phonegap-plugin/releases) 
@@ -14,7 +14,7 @@ Cross-Platform push notifications by Pushwoosh for PhoneGap
 Using npm (requires cordova 5.0+):
 
 ```
-cordova plugin add pushwoosh-pgb-plugin@7.5.0
+cordova plugin add pushwoosh-pgb-plugin@7.11.0
 ```
 
 ### Guide

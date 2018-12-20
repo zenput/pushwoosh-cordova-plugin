@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android" id="pushwoosh-cordova-plugin" version="7.5.0">
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android" id="pushwoosh-cordova-plugin" version="7.11.0">
 
 	<name>Pushwoosh</name>
 
@@ -19,6 +19,9 @@
 	<preference name="LOG_LEVEL" default="DEBUG" />
 	<preference name="IOS_FOREGROUND_ALERT_TYPE" default="NONE" />
 	<preference name="ANDROID_FOREGROUND_PUSH" default="false" />
+    <preference name="ANDROID_IS_ENABLE_FOREGROUND_SERVICE" default="false" />
+    <preference name="ANDROID_NOTIFICATION_FOREGROUND_SERVICE_TEXT" default="Work in progress" />
+    <preference name="ANDROID_NOTIFICATION_FOREGROUND_SERVICE_CHANNEL_NAME" default="Foreground service" />
 
 	<js-module src="www/PushNotification.js" name="PushNotification">
 		<clobbers target="plugins.pushNotification" />
@@ -50,7 +53,6 @@
 			<meta-data android:name="com.pushwoosh.notification_service_extension" android:value="com.pushwoosh.plugin.pushnotifications.PushwooshNotificationServiceExtension" />
 
 			<meta-data android:name="com.pushwoosh.internal.plugin_provider"	android:value="com.pushwoosh.plugin.internal.PhonegapPluginProvider" />
-
 			<!-- Beacons -->
 			<service
 				android:name="com.pushwoosh.thirdparty.radiusnetworks.ibeacon.service.IBeaconService"
@@ -64,6 +66,10 @@
 			<service android:name="com.pushwoosh.beacon.PushBeaconService" />
 
 			<!-- Location -->
+            <meta-data android:name="com.pushwoosh.start_foreground_service" android:value="$ANDROID_IS_ENABLE_FOREGROUND_SERVICE" />
+            <meta-data android:name="com.pushwoosh.foreground_service_notification_text" android:value="$ANDROID_NOTIFICATION_FOREGROUND_SERVICE_TEXT" />
+            <meta-data android:name="com.pushwoosh.foreground_service_notification_channel_name" android:value="$ANDROID_NOTIFICATION_FOREGROUND_SERVICE_CHANNEL_NAME" />
+            
 			<meta-data android:name="com.pushwoosh.plugin.location"	android:value="com.pushwoosh.location.LocationPlugin" />
 
 			<service android:name="com.pushwoosh.location.network.GeoLocationServiceApi16" />
@@ -76,7 +82,9 @@
 				android:name="com.pushwoosh.location.network.GeoLocationServiceApi21"
 				android:exported="true"
 				android:permission="android.permission.BIND_JOB_SERVICE" />
-
+                
+            <service android:name="com.pushwoosh.location.foregroundservice.ForegroundService"/>
+            
 			<receiver android:name="com.pushwoosh.location.geofencer.GeofenceReceiver">
 				<intent-filter>
 					<action android:name="$PACKAGE_NAME.action.GEOFENCE" />
@@ -92,6 +100,9 @@
 
 		<source-file src="src/android/src/com/pushwoosh/plugin/pushnotifications/PushNotifications.java"
 			target-dir="src/com/pushwoosh/plugin/pushnotifications" />
+            
+        <source-file src="src/android/src/com/pushwoosh/plugin/pushnotifications/InboxUiStyleManager.java"
+            target-dir="src/com/pushwoosh/plugin/pushnotifications" />
 
 		<source-file src="src/android/src/com/pushwoosh/plugin/pushnotifications/PushwooshNotificationServiceExtension.java"
 			target-dir="src/com/pushwoosh/plugin/pushnotifications" />
@@ -106,21 +117,21 @@
 		<framework src="com.google.firebase:firebase-core:+" />
 		<framework src="com.google.firebase:firebase-messaging:+" />
 
-		<framework src="com.android.support:support-v4:26.+" />
-        <framework src="com.android.support:appcompat-v7:26.+" />
-        <framework src="com.android.support:recyclerview-v7:26.+" />
-        <framework src="com.android.support:design:26.+" />
+		<framework src="com.android.support:support-v4:27.+" />
+        <framework src="com.android.support:appcompat-v7:27.+" />
+        <framework src="com.android.support:recyclerview-v7:27.+" />
+        <framework src="com.android.support:design:27.+" />
         <framework src="com.android.support.constraint:constraint-layout:1.0.2" />
-        <framework src="com.github.bumptech.glide:glide:4.3.1" />
+        <framework src="com.github.bumptech.glide:glide:4.7.1" />
         <framework src="org.jetbrains.kotlin:kotlin-stdlib-jre7:1.1.60" />
-        <framework src="com.pushwoosh:pushwoosh:5.7.5"/>
-		<framework src="com.pushwoosh:pushwoosh-amazon:5.7.5"/>
-		<framework src="com.pushwoosh:pushwoosh-badge:5.7.5"/>
-		<framework src="com.pushwoosh:pushwoosh-gcm:5.7.5"/>
-        <framework src="com.pushwoosh:pushwoosh-inbox:5.7.5"/>
-        <framework src="com.pushwoosh:pushwoosh-inbox-ui:5.7.5"/>
-		<lib-file src="src/android/libs/pushwoosh-beacon_v5.7.5.jar"/>
-		<lib-file src="src/android/libs/pushwoosh-location_v5.7.5.jar"/>
+        <framework src="com.pushwoosh:pushwoosh:5.11.0"/>
+		<framework src="com.pushwoosh:pushwoosh-amazon:5.11.0"/>
+		<framework src="com.pushwoosh:pushwoosh-badge:5.11.0"/>
+		<framework src="com.pushwoosh:pushwoosh-gcm:5.11.0"/>
+        <framework src="com.pushwoosh:pushwoosh-inbox:5.11.0"/>
+        <framework src="com.pushwoosh:pushwoosh-inbox-ui:5.11.0"/>
+		<lib-file src="src/android/libs/pushwoosh-beacon_v5.11.0.jar"/>
+		<lib-file src="src/android/libs/pushwoosh-location_v5.11.0.jar"/>
 	</platform>
 
 	<!-- ios -->
@@ -157,12 +168,18 @@
 
 		<header-file src="src/ios/PushNotification.h" target-dir="ios"/>
 		<source-file src="src/ios/PushNotification.m" target-dir="ios"/>
+        <header-file src="src/ios/PWBackward.h" target-dir="ios"/>
+        <source-file src="src/ios/PWBackward.m" target-dir="ios"/>
+        <header-file src="src/ios/PushwooshGeozones.framework/Versions/A/Headers/PWGeozonesManager.h" target-dir="ios"/>
 		<header-file src="src/ios/Pushwoosh.framework/Versions/A/Headers/PushNotificationManager.h" target-dir="ios"/>
+		<header-file src="src/ios/Pushwoosh.framework/Versions/A/Headers/PWInAppManager.h" target-dir="ios"/>
 		<header-file src="src/ios/Pushwoosh.framework/Versions/A/Headers/PWGDPRManager.h" target-dir="ios"/>
 		<header-file src="src/ios/PWLog.h" target-dir="ios"/>
         <header-file src="src/ios/PushwooshInboxUI.framework/Versions/A/Headers/PushwooshInboxUI.h" target-dir="ios"/>
         <header-file src="src/ios/PushwooshInboxUI.framework/Versions/A/Headers/PWIInboxStyle.h" target-dir="ios"/>
         <header-file src="src/ios/PushwooshInboxUI.framework/Versions/A/Headers/PWIInboxUI.h" target-dir="ios"/>
+        
+        <source-file src="src/ios/PushwooshGeozones.framework/Versions/A/PushwooshGeozones" framework="true"/>
 		<source-file src="src/ios/Pushwoosh.framework/Versions/A/Pushwoosh" framework="true"/>
         <source-file src="src/ios/PushwooshInboxUI.framework/Versions/A/PushwooshInboxUI" framework="true"/>
         <resource-file src="src/ios/PushwooshInboxBundle.bundle" />

@@ -16,6 +16,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationManagerCompat;
+import android.webkit.JavascriptInterface;
 
 import com.pushwoosh.GDPRManager;
 import com.pushwoosh.Pushwoosh;
@@ -43,6 +44,7 @@ import com.pushwoosh.tags.TagsBundle;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
+import org.apache.cordova.CordovaWebView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -617,12 +619,14 @@ public class PushNotifications extends CordovaPlugin {
 
 		return true;
 	}
-    
-    @CordovaMethod
-    private boolean presentInboxUI(JSONArray data, final CallbackContext callbackContext) {
-        this.cordova.getActivity().startActivity(new Intent(this.cordova.getActivity(), InboxActivity.class));
-        return true;
-    }
+
+	@CordovaMethod
+	private boolean presentInboxUI(JSONArray data, final CallbackContext callbackContext) {
+		if (data.length() > 0)
+			InboxUiStyleManager.setStyle(this.cordova.getActivity(), data.optJSONObject(0));
+		this.cordova.getActivity().startActivity(new Intent(this.cordova.getActivity(), InboxActivity.class));
+		return true;
+	}
 
 	@CordovaMethod
 	public boolean showGDPRConsentUI(JSONArray data, final CallbackContext callbackContext){
@@ -868,4 +872,38 @@ public class PushNotifications extends CordovaPlugin {
 			PWLog.exception(e);
 		}
 	}
+
+
+	public class JavascriptInterfaceCordova {
+		@JavascriptInterface
+		public void callFunction(String functionName) {
+			String url = String.format("%s();", functionName);
+			evalJs(url);
+		}
+
+		@JavascriptInterface
+		public void callFunction(String functionName, String args) {
+			String url;
+			if (args == null || args.isEmpty()) {
+				url = String.format("%s();", functionName);
+			} else {
+				url = String.format("%s(%s);", functionName, args);
+			}
+			evalJs(url);
+		}
+	}
+
+	@CordovaMethod
+	private boolean addJavaScriptInterface(JSONArray data, final CallbackContext callbackContext) {
+		try {
+			String name = data.getString(0);
+			PushwooshInApp.getInstance().addJavascriptInterface(new JavascriptInterfaceCordova(), name);
+		} catch (JSONException e) {
+			PWLog.error(TAG, "No parameters has been passed to addJavaScriptInterface function. Did you follow the guide correctly?", e);
+			return false;
+		}
+
+		return true;
+	}
+
 }
