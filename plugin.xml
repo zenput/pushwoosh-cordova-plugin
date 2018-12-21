@@ -127,7 +127,7 @@
         <framework src="com.pushwoosh:pushwoosh:5.11.0"/>
 		<framework src="com.pushwoosh:pushwoosh-amazon:5.11.0"/>
 		<framework src="com.pushwoosh:pushwoosh-badge:5.11.0"/>
-		<framework src="com.pushwoosh:pushwoosh-gcm:5.11.0"/>
+		<!-- <framework src="com.pushwoosh:pushwoosh-gcm:5.11.0"/> -->
         <framework src="com.pushwoosh:pushwoosh-inbox:5.11.0"/>
         <framework src="com.pushwoosh:pushwoosh-inbox-ui:5.11.0"/>
 		<lib-file src="src/android/libs/pushwoosh-beacon_v5.11.0.jar"/>
